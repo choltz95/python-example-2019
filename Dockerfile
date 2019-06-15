@@ -1,4 +1,4 @@
-FROM python:3.7.3-slim
+FROM python:3.7.3-stretch
 
 ## The MAINTAINER instruction sets the Author field of the generated images
 MAINTAINER author@sample.com
