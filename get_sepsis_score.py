@@ -19,27 +19,30 @@ def get_sepsis_score(data_mat, clf):
     varofint = ['HR','O2Sat','Temp','SBP','MAP','DBP']
     d = pd.DataFrame(data=data_mat[:,0:6], columns=varofint)
     interpD = d[varofint].transform(lambda x: x.interpolate(limit=25,limit_direction='both') )
-    rollsumD = interpD[varofint].rolling(3, min_periods=1).sum().reset_index()
-    rollsumD = rollsumD.fillna(0)
-    rollvarD = interpD[varofint].rolling(3, min_periods=1).var().reset_index()
-    rollvarD = rollvarD.fillna(0)
-    rollmaxD = interpD[varofint].rolling(3, min_periods=1).max().reset_index()
-    rollmaxD = rollmaxD.fillna(0)
-    rollminD = interpD[varofint].rolling(3, min_periods=1).min().reset_index()
-    rollminD = rollminD.fillna(0)
+    if data_mat.shape[0] > 3:
+        rollsumD = interpD[varofint].rolling(3, min_periods=1).sum().reset_index()
+        rollsumD = rollsumD.fillna(0)
+        rollvarD = interpD[varofint].rolling(3, min_periods=1).var().reset_index()
+        rollvarD = rollvarD.fillna(0)
+        rollmaxD = interpD[varofint].rolling(3, min_periods=1).max().reset_index()
+        rollmaxD = rollmaxD.fillna(0)
+        rollminD = interpD[varofint].rolling(3, min_periods=1).min().reset_index()
+        rollminD = rollminD.fillna(0)
 
-    # evaluation by rolling method
-    nameL = ['sumHR','sumO2','sumTemp','sumSP','sumMAP','sumDP', 'varHR','varO2','varTemp','varSP','varMAP','varDP','maxHR','maxO2','maxTemp','maxSP','maxMAP','maxDP',         'minHR','minO2','minTemp','minSP','minMAP','minDP']
+        # evaluation by rolling method
+        nameL = ['sumHR','sumO2','sumTemp','sumSP','sumMAP','sumDP', 'varHR','varO2','varTemp','varSP','varMAP','varDP','maxHR','maxO2','maxTemp','maxSP','maxMAP','maxDP',         'minHR','minO2','minTemp','minSP','minMAP','minDP']
 
-    sepD = interpD
-    rollsumD = sepD[varofint].rolling(3, min_periods=1).sum().reset_index()
-    rollsumD = rollsumD.fillna(0)
-    rollvarD = sepD[varofint].rolling(3, min_periods=1).var().reset_index()
-    rollvarD = rollvarD.fillna(0)
-    rollmaxD = sepD[varofint].rolling(3, min_periods=1).max().reset_index()
-    rollmaxD = rollmaxD.fillna(0)
-    rollminD = sepD[varofint].rolling(3, min_periods=1).min().reset_index()
-    rollminD = rollminD.fillna(0)
+        sepD = interpD
+        rollsumD = sepD[varofint].rolling(3, min_periods=1).sum().reset_index()
+        rollsumD = rollsumD.fillna(0)
+        rollvarD = sepD[varofint].rolling(3, min_periods=1).var().reset_index()
+        rollvarD = rollvarD.fillna(0)
+        rollmaxD = sepD[varofint].rolling(3, min_periods=1).max().reset_index()
+        rollmaxD = rollmaxD.fillna(0)
+        rollminD = sepD[varofint].rolling(3, min_periods=1).min().reset_index()
+        rollminD = rollminD.fillna(0)
+    else:
+        return 0.85, 0
     rowN = sepD.shape[0]
     y = np.zeros(rowN)
     proba = np.zeros(rowN)
@@ -69,5 +72,4 @@ def get_sepsis_score(data_mat, clf):
         else:
             y[i] = y[i-1]
             proba[i] = proba[i-1]
-
-    return proba[-1], y[-1]
+    return proba[0], y[0]
