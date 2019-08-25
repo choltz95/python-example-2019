@@ -11,19 +11,19 @@ def move_to_cuda(input_data):
         input_data_.append(d.cuda())
     return input_data_
 
-    def postprocess(prediction):
-        sep_flag = 0
-        pr = []
-        for output in prediction:
-            if sep_flag == 1:
-                pr.append(1)
-                continue
-            if output[1] > 0.4:
-                sep_flag = 1
-                pr.append(1)
-            else:
-                pr.append(0)
-        return pr
+def postprocess(prediction):
+    sep_flag = 0
+    pr = []
+    for output in prediction:
+        if sep_flag == 1:
+            pr.append(1)
+            continue
+        if output[1] > 0.4:
+            sep_flag = 1
+            pr.append(1)
+        else:
+            pr.append(0)
+    return pr
 
 def get_sepsis_score(data, model):
     varofint = ['HR','O2Sat','Temp','SBP','MAP','DBP', 'Resp']
